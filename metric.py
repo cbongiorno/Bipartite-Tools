@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import scipy.stats as st
 from collections import Counter,defaultdict
 import sys
@@ -36,7 +38,11 @@ def awi(A,B):
         return None,1.
 
 if __name__=='__main__':
-	
+
 	x = sys.argv[1]
-	x = pd.read_csv(x,sep='\t')
-	print awi(x[0],x[1])
+
+	x = pd.read_csv(x,sep='\t',header=None)
+	A = awi(x[0],x[1])
+	
+	print "AWI: ",A[0]
+	print "pvalue: ",A[1]
