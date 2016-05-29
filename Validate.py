@@ -61,7 +61,7 @@ def SVN(gb,which=False):
 
 	else:
 		gfdr = ig.Graph(g.vcount())
-		gfdr.es["weight"] = 1.0
+		gfdr.vs["name"] = g.vs["name"]
 		gfdr.es["weight"] = 1.0
 		
 	del g.vs["Tid"]
@@ -95,7 +95,8 @@ def main(argv):
 	return inputfile,outputfile,side
 
 def _get_BipartiteFromFile(file_r):
-	ED = pd.read_table(file_r,sep=' ',header=False)
+	
+	ED = pd.read_table(file_r,sep=' ',header=None)
 	
 	A = list(set(ED[0]))
 	B = list(set(ED[1]))
@@ -103,11 +104,11 @@ def _get_BipartiteFromFile(file_r):
 	iA = dict(zip(A,range(len(A))))
 	iB = dict(zip(B,range(len(A),len(A)+len(B))))
 	
-	ed = [(iA[a],iB[b]) for a,b in zip(A,B)]
+	ed = [(iA[a],iB[b]) for a,b in zip(ED[0],ED[1])]
 	nod = [0]*len(A)+[1]*len(B)
 	
 	gb = ig.Graph.Bipartite(nod,ed)
-	gb.vs["name"] = nod
+	gb.vs["name"] = A+B
 	
 	return gb
 
@@ -126,8 +127,8 @@ if __name__=='__main__':
 	file_r,file_w,side = main(sys.argv[1:])
 	
 	gb = _get_BipartiteFromFile(file_r)
-	
-	g,gbonf,gfdr = Validate(gb,side)
+		
+	g,gbonf,gfdr = SVN(gb,side)
 	
 	fw_full = file_w.split('.')[0]+'_full.net'
 	fw_bonf = file_w.split('.')[0]+'_bonf.net'
@@ -148,9 +149,11 @@ if __name__=='__main__':
 	
 	'write community'
 	T = ['Full','Bonf','FDR','Full+Bonf','Full+FDR']
-	X = [Cfull,Cbonf,Cfdr,Cfull_bonf,Cfull_fdr]
+	X = np.array([Cfull,Cbonf,Cfdr,Cfull_bonf,Cfull_fdr]).transpose()
+	
+
 	X = pd.DataFrame(X,columns=T)
-	X.to_csv(file_w.split('.')[0]+'_CommunityMembership.net',index=False)
+	X.to_csv(file_w.split('.')[0]+'_CommunityMembership.net',index=False,sep='\t')
 	
 
 
