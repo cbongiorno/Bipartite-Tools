@@ -19,8 +19,7 @@ def CONTRACT_COMMUNITY(g,CB):
     R =[NN[b] for b in g.vs["name"]]
     return R
     
-def Pvalue(gb,g,which=False):
-	to_ck = [e.tuple for e in g.es]
+def Pvalue(gb,g,to_ck,which=False):
   
 	if which==False:  
 		Nb =  sum(gb.vs["type"])
@@ -40,7 +39,8 @@ def SVN(gb,which=False,alpha=0.01):
 
 	I = g.vs["Tid"]
 	
-	PB = Pvalue(gb,g,which)
+	to_ck = [e.tuple for e in g.es]
+	PB = Pvalue(gb,g,to_ck,which)
 	
 	bnf = alpha/len(PB)
 	PVf = filter(lambda x:x[0]<bnf,PB)
