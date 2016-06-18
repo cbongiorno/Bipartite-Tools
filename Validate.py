@@ -19,13 +19,7 @@ def CONTRACT_COMMUNITY(g,CB):
     R =[NN[b] for b in g.vs["name"]]
     return R
     
-
-def SVN(gb,which=False):
-		
-	gb.vs["Tid"] = range(gb.vcount())	
-	g = gb.bipartite_projection(multiplicity=True,which=which)
-
-	I = g.vs["Tid"]
+def Pvalue(gb,g,which=False):
 	to_ck = [e.tuple for e in g.es]
   
 	if which==False:  
@@ -37,10 +31,20 @@ def SVN(gb,which=False):
 	D = set(tuple([g[(a,b)]]+sorted([gb.vs[I[a]].degree(),gb.vs[I[b]].degree()])) for a,b in to_ck)
 	PV = {(a,b,c): survivor(a-1,Nb,b,c) for a,b,c in D}
 	PB = [(PV[tuple([g[(a,b)]]+sorted([gb.vs[I[a]].degree(),gb.vs[I[b]].degree()]))],(a,b),g[(a,b)]) for a,b in to_ck ]
+	return PB
 
-	bnf = 0.01/len(PB)
+def SVN(gb,which=False,alpha=0.01):
+		
+	gb.vs["Tid"] = range(gb.vcount())	
+	g = gb.bipartite_projection(multiplicity=True,which=which)
+
+	I = g.vs["Tid"]
+	
+	PB = Pvalue(gb,g,which)
+	
+	bnf = alpha/len(PB)
 	PVf = filter(lambda x:x[0]<bnf,PB)
-	PBf,PB = filter(lambda (i,x):x[0]<(i+1)*0.01/(len(PB)),enumerate(sorted(PB))) ,PVf
+	PBf,PB = filter(lambda (i,x):x[0]<(i+1)*alpha/(len(PB)),enumerate(sorted(PB))) ,PVf
 
 	if len(PB)>0:
 		ED = list(zip(*PB)[1])
