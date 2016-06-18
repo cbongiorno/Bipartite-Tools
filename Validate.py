@@ -20,7 +20,8 @@ def CONTRACT_COMMUNITY(g,CB):
     return R
     
 def Pvalue(gb,g,to_ck,which=False):
-  
+	I = g.vs["Tid"]
+	
 	if which==False:  
 		Nb =  sum(gb.vs["type"])
 	else:
@@ -36,8 +37,7 @@ def SVN(gb,which=False,alpha=0.01):
 		
 	gb.vs["Tid"] = range(gb.vcount())	
 	g = gb.bipartite_projection(multiplicity=True,which=which)
-
-	I = g.vs["Tid"]
+	
 	
 	to_ck = [e.tuple for e in g.es]
 	PB = Pvalue(gb,g,to_ck,which)
