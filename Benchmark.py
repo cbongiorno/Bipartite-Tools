@@ -9,39 +9,68 @@ import numpy as np
 import pandas as pd
 import sys, getopt
 
-def ADD_NOISE(Net,N,prew):
-    A = set(range(N))
-    for x in xrange(len(Net)):
-        n = st.binom.rvs(len(Net[x]),1.-prew)
-        s = rd.sample(Net[x],n)
-        Net[x] = s + rd.sample(A - set(s),len(Net[x])-n)
-    NOD = list(np.repeat(0,len(Net)))+list(np.repeat(1,N))
-    EDG = [(i,len(Net)+p) for i in range(len(Net)) for p in Net[i]]
-        
-    gb = ig.Graph.Bipartite(NOD,EDG)
-    gb.vs["name"] = map(str,range(gb.vcount()))
-    
-    return gb 
+def ADD_NOISE(Net,N,prew,Pb=None):
+	A = set(range(N))
+	for x in xrange(len(Net)):
+		n = st.binom.rvs(len(Net[x]),1.-prew)
+		s = rd.sample(Net[x],n)
+		sel = A - set(s)
 
-def CREATE_NET(SA,SB,pc,pr):
+		if Pb==None: Net[x] = s + rd.sample(sel,len(Net[x])-n)
+		else:
+			p = Pb[list(sel)]
+			p = p/sum(p)
+			
+			Net[x] = s+list(np.random.choice(list(sel),replace=False,size=len(Net[x])-n,p=p))
+
+			
+	NOD = list(np.repeat(0,len(Net)))+list(np.repeat(1,N))
+	EDG = [(i,len(Net)+p) for i in range(len(Net)) for p in Net[i]]
+		
+	gb = ig.Graph.Bipartite(NOD,EDG)
+	gb.vs["name"] = map(str,range(gb.vcount()))
+
+	return gb 
+
+def CREATE_NET(SA,SB,pc,pr,degree_dist=None,Pb=None):
 	
 	q = len(SA)
 	
-	'Create Community'
-	N = []
-	Net = []
-	for i in xrange(q):
-		if N==[]: M = 0
-		else: M = max(N)+1
-		n = map(lambda x: x+M,xrange(SB[i]))
-		k = st.binom.rvs(len(n),pc[i],size=SA[i])
-		Net.extend([rd.sample(n,k[i]) for i in xrange(len(k))])
-		N.extend(n)
+	if degree_dist==None:
+		'Create Community'
+		N = []
+		Net = []
+		for i in xrange(q):
+			if N==[]: M = 0
+			else: M = max(N)+1
+			n = map(lambda x: x+M,xrange(SB[i]))
+			k = st.binom.rvs(len(n),pc[i],size=SA[i])
+			Net.extend([rd.sample(n,k[i]) for i in xrange(len(k))])
+			N.extend(n)
+	else:
+		Nb = sum(SB)
+		P = degree_dist
+		'Degree Sequance'
+		N = []
+		Net = []
+		for i in range(q):
+			if N==[]: M = 0
+			else: M = max(N)+1
+			n = map(lambda x: x+M,range(SB[i]))
+			k2 = P[sum(SA[:i]):sum(SA[:i+1])]
+			k = [a  if a<=SB[i] else len(n) for a in k2]
+			r = np.array(k2)-np.array(k)
+			CMP = list(set(range(Nb)) -set(n))
+			s = [rd.sample(n,k[i]) for i in xrange(len(k))]
+			l = [rd.sample(CMP,r[i]) for i in xrange(len(r))]
+			ad = [a+b for a,b in zip(s,l)]
+			Net.extend(ad)
+			N.extend(n)
 
 	'Reference Membership'
 	O =[i for i,c in enumerate(SA) for h in xrange(c)]
 	
-	gb = ADD_NOISE(Net,len(N),pr)
+	gb = ADD_NOISE(Net,len(N),pr,Pb)
 	
 	return gb,O
 
