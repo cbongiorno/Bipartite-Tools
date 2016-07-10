@@ -75,7 +75,6 @@ def LoivenOriginal(g,n,seed,part=None):
 	else:
 		os.system(DIRs+'community %d /tmp/graph_%d.bin -l -1 -w /tmp/graph_%d.weights  > /tmp/graph_%d.tree'%(seed,n,n,n))
 
-	print DIRs+'hierarchy /tmp/graph_%d.tree'%n
 	lv = int(os.popen(DIRs+'hierarchy /tmp/graph_%d.tree'%n).read().split('\n')[0].split(': ')[1])-1
 
 
