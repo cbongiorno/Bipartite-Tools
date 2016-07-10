@@ -10,7 +10,7 @@ def TestVar(part,vm):
     np.random.shuffle(p2)
     return ig.compare_communities(part,p2,method='vi')>vm
 
-def Lypou(graph,n,seed=None,vm=None,var=True,cmpOut=False):
+def Lypou(graph,n,seed_rand,seed=None,vm=None,var=True,cmpOut=False):
     'Devi corregere il seed della random che manca'
     
     if seed!=None:
@@ -29,11 +29,11 @@ def Lypou(graph,n,seed=None,vm=None,var=True,cmpOut=False):
         if  diff_seed > vm: break
     
     if seed!=None:
-        comm = LovivenOriginal(graph,n,seed)
-        comm_var = LovivenOriginal(graph,n,seed_var)
+        comm = LovivenOriginal(graph,n,seed_rand,seed)
+        comm_var = LovivenOriginal(graph,n,seed_rand,seed_var)
     else:
-        comm = LovivenOriginal(graph,n)
-        comm_var = LovivenOriginal(graph,n)
+        comm = LovivenOriginal(graph,n,seed_rand)
+        comm_var = LovivenOriginal(graph,n,seed_rand)
      
     diff_out = ig.compare_communities(comm,comm_var,method='vi')
     if cmpOut==False:
