@@ -42,9 +42,9 @@ def SVN(gb,which=False,alpha=0.01):
 	to_ck = [e.tuple for e in g.es]
 	PB = Pvalue(gb,g,to_ck,which)
 	
-	bnf = alpha/len(PB)
+	bnf = alpha/(g.vcount()*(g.vcount()-1))/2
 	PVf = filter(lambda x:x[0]<bnf,PB)
-	PBf,PB = filter(lambda (i,x):x[0]<(i+1)*alpha/(len(PB)),enumerate(sorted(PB))) ,PVf
+	PBf,PB = filter(lambda (i,x):x[0]<(i+1)*bnf,enumerate(sorted(PB))) ,PVf
 
 	if len(PB)>0:
 		ED = list(zip(*PB)[1])
