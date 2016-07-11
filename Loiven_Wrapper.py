@@ -43,8 +43,9 @@ def Lypou(graph,n,seed_rand,seed=None,vm=None,var=True,cmpOut=False):
         
         
 
-def LoivenOriginal(g,n,seed,part=None):
-	DIRs = 'Community_latest/'
+def LoivenOriginal(g,n,seed,part=None,DIRs = '/home/bongiorno/projects/BONF_ADJ_COMPARISON/src/Bipartite-Benchmark/Community_latest/'):
+	
+	
 	to_ck = [e.tuple for e in g.es]
 
 	Od= OrderedDict.fromkeys(list(flatten(to_ck)))
@@ -72,8 +73,10 @@ def LoivenOriginal(g,n,seed,part=None):
 
 	if part!=None:
 		os.system(DIRs+'community %d /tmp/graph_%d.bin -l -1 -w /tmp/graph_%d.weights -p /tmp/Part_%d.part > /tmp/graph_%d.tree'%(seed,n,n,n,n))
+		#print DIRs+'community %d /tmp/graph_%d.bin -l -1 -w /tmp/graph_%d.weights -p /tmp/Part_%d.part > /tmp/graph_%d.tree'%(seed,n,n,n,n)
 	else:
 		os.system(DIRs+'community %d /tmp/graph_%d.bin -l -1 -w /tmp/graph_%d.weights  > /tmp/graph_%d.tree'%(seed,n,n,n))
+		#print DIRs+'community %d /tmp/graph_%d.bin -l -1 -w /tmp/graph_%d.weights  > /tmp/graph_%d.tree'%(seed,n,n,n)
 
 	lv = int(os.popen(DIRs+'hierarchy /tmp/graph_%d.tree'%n).read().split('\n')[0].split(': ')[1])-1
 
@@ -95,7 +98,7 @@ def LoivenOriginal(g,n,seed,part=None):
 	c = c.astype(int)
 
 
-	os.system('rm /tmp/graph_%d.bin /tmp/graph_%d.tree /tmp/graph_%d.weights /tmp/graph_node2comm_level2_%d'%(n,n,n,n))
+	os.system('rm /tmp/graph_%d.bin /tmp/graph_%d.txt /tmp/graph_%d.tree /tmp/graph_%d.weights /tmp/graph_node2comm_level2_%d'%(n,n,n,n,n))
 	if part!=None:
 		os.system('rm  /tmp/Part_%d.part'%n)
 
