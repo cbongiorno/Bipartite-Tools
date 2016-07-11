@@ -60,7 +60,8 @@ def LoivenOriginal(g,n,seed,part=None,DIRs = '/home/bongiorno/projects/BONF_ADJ_
 
 
 	os.system(DIRs+'convert  -i /tmp/graph_%d.txt -o /tmp/graph_%d.bin -w /tmp/graph_%d.weights'%(n,n,n))
-
+	#print DIRs+'convert  -i /tmp/graph_%d.txt -o /tmp/graph_%d.bin -w /tmp/graph_%d.weights'%(n,n,n)
+	
 	if part!=None:
 		Part = np.zeros(g.vcount()).astype(int)
 		for i,p in enumerate(part):
@@ -79,10 +80,11 @@ def LoivenOriginal(g,n,seed,part=None,DIRs = '/home/bongiorno/projects/BONF_ADJ_
 		#print DIRs+'community %d /tmp/graph_%d.bin -l -1 -w /tmp/graph_%d.weights  > /tmp/graph_%d.tree'%(seed,n,n,n)
 
 	lv = int(os.popen(DIRs+'hierarchy /tmp/graph_%d.tree'%n).read().split('\n')[0].split(': ')[1])-1
-
+	#print DIRs+'hierarchy /tmp/graph_%d.tree'%n
 
 	os.system(DIRs+'hierarchy /tmp/graph_%d.tree -l %d > /tmp/graph_node2comm_level2_%d'%(n,lv,n))
-
+	#print DIRs+'hierarchy /tmp/graph_%d.tree -l %d > /tmp/graph_node2comm_level2_%d'%(n,lv,n)
+	
 	cf = pd.read_csv('/tmp/graph_node2comm_level2_%d'%n,header=None,sep=' ')[1]
 
 	Odrv = dict(map(list,map(reversed,Od.items())))
@@ -97,9 +99,9 @@ def LoivenOriginal(g,n,seed,part=None,DIRs = '/home/bongiorno/projects/BONF_ADJ_
 
 	c = c.astype(int)
 
-
+	
 	os.system('rm /tmp/graph_%d.bin /tmp/graph_%d.txt /tmp/graph_%d.tree /tmp/graph_%d.weights /tmp/graph_node2comm_level2_%d'%(n,n,n,n,n))
 	if part!=None:
 		os.system('rm  /tmp/Part_%d.part'%n)
-
+	
 	return c
