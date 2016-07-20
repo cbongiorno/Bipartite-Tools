@@ -44,20 +44,29 @@ def SVN(gb,which=False,alpha=0.01):
 	
 	bnf = alpha/(g.vcount()*(g.vcount()-1))/2
 	PVf = filter(lambda x:x[0]<bnf,PB)
-	PBf,PB = filter(lambda (i,x):x[0]<(i+1)*bnf,enumerate(sorted(PB))) ,PVf
+	
+	pv = np.array(zip(*PB)[0])
+	pv.sort()
 
-	if len(PB)>0:
-		ED = list(zip(*PB)[1])
+	bnf = 2*0.01/(g.vcount()*(g.vcount()-1))
+	ind_fdr =np.where(pv < np.arange(1,len(pv)+1)*bnf)[0][-1]
+
+	PBf = PB[:ind_fdr]
+	
+	#PBf,PB = filter(lambda (i,x):x[0]<(i+1)*bnf,enumerate(sorted(PB))) ,PVf
+
+	if len(PVf)>0:
+		ED = list(zip(*PVf)[1])
 		gbonf = ig.Graph(g.vcount(),edges=ED)
 		gbonf.vs["name"] = g.vs["name"]
-		gbonf.es["weight"]=list(zip(*PB)[2])			
+		gbonf.es["weight"]=list(zip(*PVf)[2])			
 	else:
 		gbonf = ig.Graph(g.vcount())
 		gbonf.vs["name"] = g.vs["name"]
 		gbonf.es["weight"] = 1.0
 	   
 	if len(PBf)>0:
-		PBf = list(zip(*PBf)[1])
+		#PBf = list(zip(*PBf)[1])
 		ED = list(zip(*PBf)[1])
 		gfdr = ig.Graph(g.vcount(),edges=ED)
 		gfdr.vs["name"] = g.vs["name"]
