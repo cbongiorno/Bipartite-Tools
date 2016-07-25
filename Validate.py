@@ -49,7 +49,10 @@ def SVN(gb,which=False,alpha=0.01):
 	pv.sort()
 
 	bnf = 2*alpha/(g.vcount()*(g.vcount()-1))
-	ind_fdr =np.where(pv < np.arange(1,len(pv)+1)*bnf)[0][-1]
+	
+	ind_fdr =np.where(pv < np.arange(1,len(pv)+1)*bnf)[0]
+	if len(ind_fdr)>0: ind_fdr = ind_fdr[-1]
+	else: ind_fdr = 0 
 
 	PBf = PB[:ind_fdr]
 	
