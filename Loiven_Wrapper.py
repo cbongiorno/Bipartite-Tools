@@ -44,7 +44,11 @@ def Lypou(graph,n,seed_rand,seed=None,vm=None,var=True,cmpOut=False):
         
 
 def LoivenOriginal(g,n,seed,part=None,DIRs = '/home/bongiorno/projects/BONF_ADJ_COMPARISON/src/Bipartite-Benchmark/Community_latest/'):
+	"It wants mandatory a igraph object (g), an integer number (n) that must be different if you computer in paraller different network, an integer number (seed) the it is the seed used to initialize the random function, Optionally you can provide a seed partition (part) the must be different from the trivail one i.e. each node in a separate partition, the last argument is the path of the directory of the Community_latest C code. It returns the membership of the nodes"
 	
+	if not os.path.exists(DIRs+'convert'):
+		print "Error please cheak the Directory %s"%DIRs
+		print "Maybe you need to compile the Loivain code"
 	
 	to_ck = [e.tuple for e in g.es]
 
@@ -57,8 +61,8 @@ def LoivenOriginal(g,n,seed,part=None,DIRs = '/home/bongiorno/projects/BONF_ADJ_
 	x = pd.DataFrame(x)
 
 	x.to_csv('/tmp/graph_%d.txt'%n,sep=' ',index=False,header=False)
-
-
+	
+	
 	os.system(DIRs+'convert  -i /tmp/graph_%d.txt -o /tmp/graph_%d.bin -w /tmp/graph_%d.weights'%(n,n,n))
 	#print DIRs+'convert  -i /tmp/graph_%d.txt -o /tmp/graph_%d.bin -w /tmp/graph_%d.weights'%(n,n,n)
 	
