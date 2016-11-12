@@ -145,5 +145,6 @@ def LoivainOriginal(g,n=0,part=None):
 	if part!=None:
 		os.system('rm  /tmp/Part_%d.part'%n)
 	'''
-	return c
+	
+	return ig.VertexClustering(g,c)
 

@@ -38,25 +38,21 @@ def SVN(gb,which=False,alpha=0.01):
 	gb.vs["Tid"] = range(gb.vcount())	
 	g = gb.bipartite_projection(multiplicity=True,which=which)
 	
-	
 	to_ck = [e.tuple for e in g.es]
 	PB = Pvalue(gb,g,to_ck,which)
 	
+	'Bonferroni'
+	alpha = 0.01
 	bnf = alpha/(g.vcount()*(g.vcount()-1))/2
 	PVf = filter(lambda x:x[0]<bnf,PB)
-	
-	pv = np.array(zip(*PB)[0])
-	pv.sort()
 
-	bnf = 2*alpha/(g.vcount()*(g.vcount()-1))
+	'FDR'
+	PB = sorted(PB)
+	p,ed,w = zip(*PB)
+	sfdr = bnf*np.arange(1,len(PB)+1)
+	s = np.where(p<sfdr)[0][-1]
+	PBf = PB[:s]
 	
-	ind_fdr =np.where(pv < np.arange(1,len(pv)+1)*bnf)[0]
-	if len(ind_fdr)>0: ind_fdr = ind_fdr[-1]
-	else: ind_fdr = 0 
-
-	PBf = PB[:ind_fdr]
-	
-	#PBf,PB = filter(lambda (i,x):x[0]<(i+1)*bnf,enumerate(sorted(PB))) ,PVf
 
 	if len(PVf)>0:
 		ED = list(zip(*PVf)[1])
