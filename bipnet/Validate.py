@@ -33,13 +33,26 @@ def Pvalue(gb,g,to_ck,which=False):
 	PB = [(PV[tuple([g[(a,b)]]+sorted([gb.vs[I[a]].degree(),gb.vs[I[b]].degree()]))],(a,b),g[(a,b)]) for a,b in to_ck ]
 	return PB
 
-def SVN(gb,which=False,alpha=0.01):
+def SVN(gb,which=False,alpha=0.01,unique_thr = None):
 		
 	gb.vs["Tid"] = range(gb.vcount())	
 	g = gb.bipartite_projection(multiplicity=True,which=which)
 	
 	to_ck = [e.tuple for e in g.es]
 	PB = Pvalue(gb,g,to_ck,which)
+	
+	if unique_thr != None:
+		PS = filter(lambda x:x[0]<unique_thr,PB)
+		if len(PS)>0:
+			ED = list(zip(*PS)[1])
+			g_uni = ig.Graph(g.vcount(),edges=ED)
+			g_uni.vs["name"] = g.vs["name"]
+			g_uni.es["weight"]=list(zip(*PS)[2])			
+		else:
+			g_uni = ig.Graph(g.vcount())
+			g_uni.vs["name"] = g.vs["name"]
+			g_uni.es["weight"] = 1.0
+		return g,g_uni
 	
 	'Bonferroni'
 	alpha = 0.01
@@ -50,8 +63,12 @@ def SVN(gb,which=False,alpha=0.01):
 	PB = sorted(PB)
 	p,ed,w = zip(*PB)
 	sfdr = bnf*np.arange(1,len(PB)+1)
-	s = np.where(p<sfdr)[0][-1]
-	PBf = PB[:s]
+	s = np.where(p<sfdr)[0]
+	if len(s)>0:
+		s = s[-1]
+		PBf = PB[:s]
+	else:
+		PBf = []
 	
 
 	if len(PVf)>0:
