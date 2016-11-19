@@ -33,26 +33,14 @@ def Pvalue(gb,g,to_ck,which=False):
 	PB = [(PV[tuple([g[(a,b)]]+sorted([gb.vs[I[a]].degree(),gb.vs[I[b]].degree()]))],(a,b),g[(a,b)]) for a,b in to_ck ]
 	return PB
 
-def SVN(gb,which=False,alpha=0.01,unique_thr = None):
+def SVN(gb,which=False,alpha=0.01):
 		
 	gb.vs["Tid"] = range(gb.vcount())	
 	g = gb.bipartite_projection(multiplicity=True,which=which)
 	
 	to_ck = [e.tuple for e in g.es]
 	PB = Pvalue(gb,g,to_ck,which)
-	
-	if unique_thr != None:
-		PS = filter(lambda x:x[0]<unique_thr,PB)
-		if len(PS)>0:
-			ED = list(zip(*PS)[1])
-			g_uni = ig.Graph(g.vcount(),edges=ED)
-			g_uni.vs["name"] = g.vs["name"]
-			g_uni.es["weight"]=list(zip(*PS)[2])			
-		else:
-			g_uni = ig.Graph(g.vcount())
-			g_uni.vs["name"] = g.vs["name"]
-			g_uni.es["weight"] = 1.0
-		return g,g_uni
+	g.es["pvalue"] = zip(*PB)[0]
 	
 	'Bonferroni'
 	alpha = 0.01
