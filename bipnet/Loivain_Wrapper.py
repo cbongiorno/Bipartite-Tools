@@ -140,11 +140,11 @@ def LoivainOriginal(g,n=0,part=None):
 
 	c = c.astype(int)
 
-	'''
+	
 	os.system('rm /tmp/graph_%d.bin /tmp/graph_%d.txt /tmp/graph_%d.tree /tmp/graph_%d.weights /tmp/graph_node2comm_level2_%d'%(n,n,n,n,n))
 	if part!=None:
 		os.system('rm  /tmp/Part_%d.part'%n)
-	'''
+	
 	
 	return ig.VertexClustering(g,c)
 
