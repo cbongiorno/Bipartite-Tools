@@ -33,21 +33,6 @@ def Pvalue(gb,g,to_ck,which=False):
 	PB = [(PV[tuple([g[(a,b)]]+sorted([gb.vs[I[a]].degree(),gb.vs[I[b]].degree()]))],(a,b),g[(a,b)]) for a,b in to_ck ]
 	return PB
 
-def TOP_VAL(g,cmp_thr=1.):
-    P = sorted(zip(g.es["pvalue"],[e.tuple for e in g.es],g.es["weight"]))
-
-    gx = ig.Graph(n=g.vcount())
-    for p,(a,b),w in P:
-        gx.add_edge(a,b)
-        lg = max(gx.components().sizes())/float(gx.vcount())
-        if lg>=cmp_thr: break
-
-    _,ed,w = zip(*filter(lambda x:x[0]<=p,P))
-
-    gx = ig.Graph(n=g.vcount(),edges=list(ed))
-    gx.es["weight"] = w
-    return gx
-
 def SVN(gb,which=False,alpha=0.01):
 		
 	gb.vs["Tid"] = range(gb.vcount())	
