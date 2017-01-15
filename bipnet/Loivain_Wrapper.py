@@ -84,8 +84,9 @@ def LoivainHierarchy(g,n=0,part=None):
     if part!=None:
         os.system('rm  /tmp/Part_%d.part'%n)
     
+    N = len(cc[0])
     if len(set(cc[0]))==1:
-        cc.append(np.arange(len(cc[0])))
+        cc.append(np.arange(N))
     else:
         cc = [np.array([0]*N)]+cc+[np.arange(N)]
 
