@@ -61,7 +61,6 @@ def LoivainHierarchy(g,n=0,part=None):
     #print DIRs+'hierarchy /tmp/graph_%d.tree'%n
     cc = []
     for lv in reversed(range(1,LV)):
-        print lv
         os.system('hierarchyX /tmp/graph_%d.tree -l %d > /tmp/graph_node2comm_level2_%d'%(n,lv,n))
         #print DIRs+'hierarchy /tmp/graph_%d.tree -l %d > /tmp/graph_node2comm_level2_%d'%(n,lv,n)
 
