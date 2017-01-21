@@ -1,5 +1,5 @@
 # Bipartite-Tools
-A tool for testing community detection algorithm on one mode bipartite projected network.
+A tool for testing community detection algorithms on one mode bipartite projected network.
 
 To install on Linux run:
 
