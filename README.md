@@ -43,7 +43,7 @@ The code will produce three networks proj_full.net proj_bonf.net proj_fdr.net.
 In the folder example there is the simple_example.py for the python usage. To use it from bash:
 
 ```
-$ bipnet/metric.py examples/awi_input 
+$ bipnet/metric.py examples/awi_input.cfg 
 ```
 The code will check the first column respect to the second.
 
