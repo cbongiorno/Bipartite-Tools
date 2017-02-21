@@ -61,10 +61,10 @@ The code is released under GNU license.
 
 ## Authors
 
-* **Christian Bongiorno** - [PurpleBooth](https://github.com/PurpleBooth)
+* **Christian Bongiorno** - [PurpleBooth](https://github.com/PurpleBooth)\\
 
-See also the list of contributors:
-Andras London [andraslondon@gmail.com](andraslondon@gmail.com)
-Salvatore Miccichè [salvatore.micciche@unipa.it](salvatore.micciche@unipa.it)
+See also the list of contributors:\\
+Andras London [andraslondon@gmail.com](andraslondon@gmail.com)\\
+Salvatore Miccichè [salvatore.micciche@unipa.it](salvatore.micciche@unipa.it)\\
 Rosario N Mantegna [rn.mantegna@gmail.com](rn.mantegna@gmail.com)
 
