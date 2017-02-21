@@ -61,7 +61,7 @@ The code is released under GNU license.
 
 ## Authors
 
-* **Christian Bongiorno** - [PurpleBooth](https://github.com/PurpleBooth) <br />
+* **Christian Bongiorno** - [pvofeta@gmail.com](pvofeta@gmail.com) <br />
 
 See also the list of contributors:<br />
 Andras London [andraslondon@gmail.com](andraslondon@gmail.com) <br />
