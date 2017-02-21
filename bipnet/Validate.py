@@ -7,17 +7,6 @@ import igraph as ig
 from collections import Counter,defaultdict
 import numpy as np
 import pandas as pd
-from copy import deepcopy
-
-
-def CONTRACT_COMMUNITY(g,CB):
-    h = deepcopy(g)
-    h.contract_vertices(CB, combine_attrs=list)
-    h.simplify(loops=False,combine_edges=dict(weight=sum))
-    CN = h.community_multilevel(weights=h.es["weight"])
-    NN = dict([(a,e) for e,b in zip(CN.membership,h.vs["name"]) for a in b])
-    R =[NN[b] for b in g.vs["name"]]
-    return R
     
 def Pvalue(gb,g,to_ck,which=False):
 	I = g.vs["Tid"]
@@ -70,7 +59,6 @@ def SVN(gb,which=False,alpha=0.01):
 		gbonf.es["weight"] = 1.0
 	   
 	if len(PBf)>0:
-		#PBf = list(zip(*PBf)[1])
 		ED = list(zip(*PBf)[1])
 		gfdr = ig.Graph(g.vcount(),edges=ED)
 		gfdr.vs["name"] = g.vs["name"]
@@ -93,23 +81,26 @@ def main(argv):
 	side = 1
 
 	try:
-	  opts, args = getopt.getopt(argv,"hi:o:s",["ifile=","ofile=","side="])
+		opts, args = getopt.getopt(argv,"hi:o:s:t",["ifile=","ofile=","side=","thr="])
 	except getopt.GetoptError:
-	  print 'Validate.py -i <inputfile> -o <outputfile> --side <bool>' 
-	  sys.exit(2)
+		print 'Validate.py -i <inputfile> -o <outputfile> --side <bool> --thr <float>' 
+		sys.exit(2)
 	for opt, arg in opts:
-	  if opt == '-h':
-		 print 'Validate.py -i <inputfile> -o <outputfile> --side <bool>' 
-		 sys.exit()
-	  elif opt in ("-i", "--ifile"):
-		 inputfile = arg
-	  elif opt in ("-o", "--ofile"):
-		 outputfile = arg
-	  elif opt in ("-s", "--side"):
-		 side = int(arg)
+		if opt == '-h':
+			print 'Validate.py -i <inputfile> -o <outputfile> --side <bool> --thr <float>'
+			sys.exit()
+		elif opt in ("-i", "--ifile"):
+			inputfile = arg
+		elif opt in ("-o", "--ofile"):
+			outputfile = arg
+		elif opt in ("-s", "--side"):
+			side = int(arg)
+		elif opt in ("-t", "--thr"):
+			alpha = float(arg)
 
 
-	return inputfile,outputfile,side
+
+	return inputfile,outputfile,side,alpha
 
 def get_BipartiteFromFile(file_r):
 	
@@ -133,7 +124,7 @@ def write_validation(g,file_w):
 	nm = g.vs["name"]
 	to_ck = [e.tuple for e in g.es]
 	
-	X = ["%s\t%s\t%d"%(nm[a],nm[b],w) for (a,b),w in zip(to_ck,g.es["weight"])]
+	X = ["%s %s %d"%(nm[a],nm[b],w) for (a,b),w in zip(to_ck,g.es["weight"])]
 	
 	with open(file_w,"w") as fw:
 		fw.write("\n".join(X)+"\n")
@@ -141,11 +132,11 @@ def write_validation(g,file_w):
 
 if __name__=='__main__':
 	
-	file_r,file_w,side = main(sys.argv[1:])
-	
+	file_r,file_w,side,alpha = main(sys.argv[1:])
+
 	gb = get_BipartiteFromFile(file_r)
 		
-	g,gbonf,gfdr = SVN(gb,side)
+	g,gbonf,gfdr = SVN(gb,side,alpha)
 	
 	fw_full = file_w.split('.')[0]+'_full.net'
 	fw_bonf = file_w.split('.')[0]+'_bonf.net'
@@ -154,23 +145,6 @@ if __name__=='__main__':
 	write_validation(g,fw_full)
 	write_validation(gbonf,fw_bonf)
 	write_validation(gfdr,fw_fdr)
-	
-	'classic community detection'
-	Cfull = g.community_multilevel(weights=g.es["weight"]).membership
-	Cbonf = gbonf.community_multilevel(weights=gbonf.es["weight"]).membership
-	Cfdr = gfdr.community_multilevel(weights=gfdr.es["weight"]).membership
-
-	'Community detection on contracted node'
-	Cfull_bonf = CONTRACT_COMMUNITY(g,Cbonf)
-	Cfull_fdr = CONTRACT_COMMUNITY(g,Cfdr)
-	
-	'write community'
-	T = ['Full','Bonf','FDR','Full+Bonf','Full+FDR']
-	X = np.array([Cfull,Cbonf,Cfdr,Cfull_bonf,Cfull_fdr]).transpose()
-	
-
-	X = pd.DataFrame(X,columns=T)
-	X.to_csv(file_w.split('.')[0]+'_CommunityMembership.net',index=False,sep='\t')
 	
 
 

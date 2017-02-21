@@ -7,30 +7,6 @@ import pandas as pd
 import numpy as np
 from itertools import combinations
 
-def AssortativeCoefficient(g,c):
-    'It wants as input an (g) igraph weighted objected, and an list/array with the membership of the nodes. It returns the Assortativity Coefficent'
-
-    cl = defaultdict(list)
-    for i,x in enumerate(c):
-        cl[x].append(i)
-    cl = [np.array(cl[i]) for i in cl if cl[i]>1]
-
-    s = g.strength(weights=g.es["weight"])
-
-    kk= 2*sum(sum(s[a]*s[b] for a,b in combinations(xc, 2) ) for xc in cl)
-    kk += sum([s[i]*s[i] for i in range(len(s))])
-
-    m = sum(s)
-
-    if m==0: return np.nan
-
-    #Qmax = (1.-(2.*kk)/m**2)
-    Qmax = (1 - kk/m**2)
-        
-    if Qmax==0: return np.nan
-
-    return g.modularity(c,weights=g.es["weight"])/Qmax
-
 def awi(A,B):
 	'It wants as input two list/array  (A,B) with the membership of the nodes. It will evaluate the AWI  A in B. That is an estimator of the inclusion of A in B'
 

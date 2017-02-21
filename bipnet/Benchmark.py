@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import igraph as ig
-from Validate import SVN,CONTRACT_COMMUNITY
+from Validate import SVN
 import scipy.stats as st
 import metric as mtr
 import random as rd
@@ -74,62 +74,6 @@ def CREATE_NET(SA,SB,pc,pr,degree_dist=None,Pb=None):
 	
 	return gb,O
 
-	
-def COMPARE(SA,SB,pc,pr,nsim):
-	Res = []
-	for isim in xrange(nsim):
-
-		gb,O = CREATE_NET(SA,SB,pc,pr)
-
-		g,gbonf,gfdr = SVN(gb,False)
-			
-		'classic community detection'
-		Cfull = g.community_multilevel(weights=g.es["weight"]).membership
-		Cbonf = gbonf.community_multilevel(weights=gbonf.es["weight"]).membership
-		Cfdr = gfdr.community_multilevel(weights=gfdr.es["weight"]).membership
-
-		'Community detection on contracted node'
-		Cfull_bonf = CONTRACT_COMMUNITY(g,Cbonf)
-		Cfull_fdr = CONTRACT_COMMUNITY(g,Cfdr)
-
-		'Estimate ARI'
-		AriFull = ig.compare_communities(Cfull,O,method='ari')
-		AriBonf = ig.compare_communities(Cbonf,O,method='ari')
-		AriFdr = ig.compare_communities(Cfdr,O,method='ari')
-		AriFullBonf = ig.compare_communities(Cfull_bonf,O,method='ari')
-		AriFullFdr = ig.compare_communities(Cfull_fdr,O,method='ari')
-
-		'Estimate AWI'
-		AwiFull,pAwiFull = mtr.awi(Cfull,O)
-		AwiBonf,pAwiBonf = mtr.awi(Cbonf,O)
-		AwiFdr,pAwiFdr = mtr.awi(Cfdr,O)
-		AwiFullBonf,pAwiFullBonf = mtr.awi(Cfull_bonf,O)
-		AwiFullFdr,pAwiFullFdr  = mtr.awi(Cfull_fdr,O)
-
-		'Estimate Modularity'
-		ModRef = g.modularity(O,weights=g.es["weight"])
-		ModFull = g.modularity(Cfull,weights=g.es["weight"])
-		ModFullBonf = g.modularity(Cfull_bonf,weights=g.es["weight"])
-		ModFullFdr = g.modularity(Cfull_fdr,weights=g.es["weight"])
-
-		'Aggregate solution'
-		X = [AriFull,AriBonf,AriFdr,AriFullBonf,AriFullFdr]
-		X.extend([AwiFull,AwiBonf,AwiFdr,AwiFullBonf,AwiFullFdr])
-		X.extend([ModRef,ModFull,ModFullBonf,ModFullFdr])
-		X.extend([pAwiFull,pAwiBonf,pAwiFdr,pAwiFullBonf,pAwiFullFdr])
-		
-		Res.append(X)
-	
-	T = ['ARI Full','ARI Bonf','ARI FDR','ARI Full+Bonf','ARI Full+FDR']
-	T.extend(['AWI Full','AWI Bonf','AWI FDR','AWI Full+Bonf','AWI Full+FDR'])
-	T.extend(['Modularity Reference','Modularity Full','Modularity Full+Bonf','Modularity Full+FDR'])
-	T.extend(['pvalue AWI Full','pvalue AWI Bonf','pvalue AWI FDR','pvalue AWI Full+Bonf','pvalue AWI Full+FDR'])
-	
-	Res = pd.DataFrame(Res,columns=T)
-	
-	return Res
-	
-
 def main(argv):
 	inputfile = ''
 	outputfile = ''
@@ -137,13 +81,13 @@ def main(argv):
 	sim = 1
 
 	try:
-	  opts, args = getopt.getopt(argv,"hi:o:n:r",["ifile=","ofile=","noise=","run="])
+	  opts, args = getopt.getopt(argv,"hi:o:n",["ifile=","ofile=","noise="])
 	except getopt.GetoptError:
-		print 'Benchmark.py -i <inputfile> -o <outputfile> --noise <noise> --run <run>' 
+		print 'Benchmark.py -i <inputfile> -o <outputfile> --noise <noise>' 
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'Benchmark.py -i <inputfile> -o <outputfile> --nrun <run> --ncpu <ncpu> --hier <bool>' 
+			print 'Benchmark.py -i <inputfile> -o <outputfile> --noise <noise>'
 			sys.exit()
 		elif opt in ("-i", "--ifile"):
 			inputfile = arg
@@ -151,22 +95,30 @@ def main(argv):
 			outputfile = arg
 		elif opt in ("-n", "--noise"):
 			n = float(arg)
-		elif opt in ("-r", "--run"):
-			sim = int(arg)
 
-	return inputfile,outputfile,noise,sim
+	return inputfile,outputfile,n
 
+
+def write_network(g,file_w):
+	nm = g.vs["name"]
+	to_ck = [e.tuple for e in g.es]
+	
+	X = ["%s %s"%(nm[a],nm[b]) for a,b in to_ck]
+	
+	with open(file_w,"w") as fw:
+		fw.write("\n".join(X)+"\n")
+	return
 
 if __name__=='__main__':
 	
-	inputfile,outputfile,pr,sim = main(sys.argv[1:])
-	X = np.array(pd.read_table(inputfile,header=None))
+	inputfile,outputfile,pr = main(sys.argv[1:])
+	X = pd.read_table(inputfile)
 	
-	SA = list(X[0].astype(int))
-	SB = list(X[1].astype(int))
-	pc = list(X[2].astype(float))
+	SA = list(X['SA'].astype(int))
+	SB = list(X['SB'].astype(int))
+	pc = list(X['pc'].astype(float))
 	
-	x = COMPARE(SA,SB,pc,pr,sim)
+	gb,O = CREATE_NET(SA,SB,pc,pr)
+	write_network(gb,outputfile)
 
-	x.to_csv(outputfile,index=False)
 	
