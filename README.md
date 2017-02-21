@@ -4,7 +4,7 @@ A tool for testing community detection algorithms on bipartite projected network
 To install on Linux run:
 
 ```
-sudo ./INSTALL
+$ sudo ./INSTALL
 ```
 
 It is possible to use it as a python library:
