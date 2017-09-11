@@ -55,6 +55,13 @@ In the folder example there is the simple_example.py for the python usage. To us
 $ bipnet/Benchmark.py -i examples/config_benchmark.cfg -o bipartite.net --noise 0.7 
 ```
 
+## Citation
+
+if you use the code, please cite:
+
+Christian Bongiorno, András London, Salvatore Miccichè, and Rosario N. Mantegna, "Core of communities in bipartite networks", *Physical review E* 96.2 (2017): 022321
+
+
 ## License
 The code is released under GNU license. 
 
