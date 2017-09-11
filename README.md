@@ -55,7 +55,7 @@ In the folder example there is the simple_example.py for the python usage. To us
 $ bipnet/Benchmark.py -i examples/config_benchmark.cfg -o bipartite.net --noise 0.7 
 ```
 
-## Citation
+## Citations
 
 if you use the code, please cite:
 
