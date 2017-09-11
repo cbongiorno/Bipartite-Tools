@@ -59,8 +59,11 @@ $ bipnet/Benchmark.py -i examples/config_benchmark.cfg -o bipartite.net --noise 
 
 if you use the code, please cite:
 
-Christian Bongiorno, András London, Salvatore Miccichè, and Rosario N. Mantegna, "Core of communities in bipartite networks", *Physical review E* 96.2 (2017): 022321
+Bongiorno, Christian; London, András; Miccichè, Salvatore and Mantegna, Rosario N. "Core of communities in bipartite networks", *Physical review E* 96.2 (2017): 022321.
+ 
+Tumminello, Michele; Micciche, Salvatore; Lillo, Fabrizio, Piilo, Jyrki and Mantegna, Rosario N.  "Statistically validated networks in bipartite complex systems". *PloS one*, 6.3 (2011):e17994.
 
+Blondel, V. D.; Guillaume, J. L.; Lambiotte, R. and Lefebvre, E. "Fast unfolding of communities in large networks". *Journal of statistical mechanics: theory and experiment*,  2008.10 (2008): P10008.
 
 ## License
 The code is released under GNU license. 
